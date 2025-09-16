@@ -1,0 +1,9 @@
+<div class="game-board">
+  <canvas #gameCanvas class="game-canvas"></canvas>
+  <div class="game-overlay" *ngIf="gameService.gameState() === 'gameOver'">
+    <h2>Game Over!</h2>
+    <p>Score: {{ gameService.getScore() }}</p>
+    <p>High Score: {{ gameService.getHighScore() }}</p>
+    <button (click)="restartGame()">Play Again</button>
+  </div>
+</div>

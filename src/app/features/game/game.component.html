@@ -1,0 +1,22 @@
+<div class="game-container">
+  <!-- Game Board -->
+  <app-game-board
+    *ngIf="gameState() === 'playing' || gameState() === 'gameOver'"
+    (gameOver)="onGameOver($event)">
+  </app-game-board>
+
+  <!-- Start Screen -->
+  <div *ngIf="gameState() === 'idle'" class="start-screen">
+    <h1>Flappy Fish</h1>
+    <div *ngIf="showNameInput" class="player-input">
+      <input
+        type="text"
+        [(ngModel)]="playerName"
+        placeholder="Enter your name"
+        (keyup.enter)="startGame()"
+        autofocus
+      >
+      <button (click)="startGame()">Start Game</button>
+    </div>
+  </div>
+</div>

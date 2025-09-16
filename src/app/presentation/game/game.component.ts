@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { GameService, GameState } from '../../core/services';
 import { ScoreUseCase } from '@core/use-cases';
 import { GameBoardComponent } from './components/game-board/game-board.component';
+import { RankingSocketService } from '../../infrastructure/services/ranking-socket.service';
+import { Score } from '@domain/models';
 
 @Component({
   selector: 'app-game',
@@ -18,18 +20,30 @@ import { GameBoardComponent } from './components/game-board/game-board.component
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
-  private gameService = inject(GameService);
+export class GameComponent implements OnInit, OnDestroy {
+  gameService = inject(GameService);
   private scoreUseCase = inject(ScoreUseCase);
+  private rankingSocketService = inject(RankingSocketService);
 
   gameState = signal<GameState>('idle');
   score = signal(0);
   highScore = signal(0);
   playerName = signal('Player');
   showNameInput = signal(true);
+  ranking = signal<Score[]>([]);
+  finalScore = signal(0);
+  private isGameOverHandled = false;
 
   ngOnInit() {
-    this.loadHighScore();
+    this.loadTopScores();
+    this.rankingSocketService.startConnection();
+    this.rankingSocketService.ranking$.subscribe(ranking => {
+      this.ranking.set(ranking);
+    });
+  }
+
+  ngOnDestroy() {
+    this.rankingSocketService.stopConnection();
   }
 
   startGame() {
@@ -42,22 +56,28 @@ export class GameComponent implements OnInit {
     }
   }
 
-  private loadHighScore() {
-    const savedHighScore = localStorage.getItem('flappyFishHighScore');
-    if (savedHighScore) {
-      this.highScore.set(parseInt(savedHighScore, 10));
+  private async loadTopScores() {
+    const topScores = await this.scoreUseCase.getTopScores(10);
+    this.ranking.set(topScores);
+    if (topScores.length > 0) {
+      this.highScore.set(topScores[0].points);
     }
   }
 
-  onGameOver(finalScore: number) {
+  async onGameOver(finalScore: number) {
+    if (this.isGameOverHandled) return;
+
+    this.isGameOverHandled = true;
+    this.finalScore.set(finalScore);
     this.gameState.set('gameOver');
-    if (finalScore > this.highScore()) {
-      this.highScore.set(finalScore);
-      localStorage.setItem('flappyFishHighScore', finalScore.toString());
-    }
+    await this.scoreUseCase.registerScore({
+      alias: this.playerName(),
+      points: finalScore
+    });
   }
 
   restartGame() {
+    this.isGameOverHandled = false;
     this.gameService.restartGame();
     this.gameState.set('playing');
   }

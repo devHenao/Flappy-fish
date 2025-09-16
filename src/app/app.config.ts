@@ -1,17 +1,17 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { InMemoryScoreRepository } from './core/repositories';
-import { SCORE_REPOSITORY } from './core/repositories/score-repository.interface';
+import { provideClientHydration } from '@angular/platform-browser';
+import { SCORE_REPOSITORY } from './core/repositories';
+import { ScoreApiRepository } from './infrastructure/repositories/score-api.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
-    {
-      provide: SCORE_REPOSITORY,
-      useClass: InMemoryScoreRepository
-    }
+    provideClientHydration(),
+    importProvidersFrom(HttpClientModule),
+    { provide: SCORE_REPOSITORY, useClass: ScoreApiRepository }
   ]
 };

@@ -6,6 +6,19 @@
   </app-game-board>
 
   <!-- Start Screen -->
+  <div *ngIf="gameState() === 'gameOver'" class="game-over-screen">
+    <h2>Game Over!</h2>
+    <p>Your Score: {{ finalScore() }}</p>
+    <h3>Top Scores</h3>
+    <ol class="ranking-list">
+      <li *ngFor="let score of ranking(); let i = index">
+        <span>{{ i + 1 }}. {{ score.alias }}</span>
+        <span>{{ score.points }}</span>
+      </li>
+    </ol>
+    <button (click)="restartGame()">Play Again</button>
+  </div>
+
   <div *ngIf="gameState() === 'idle'" class="start-screen">
     <h1>Flappy Fish</h1>
     <div *ngIf="showNameInput" class="player-input">

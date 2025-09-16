@@ -1,13 +1,6 @@
-import { Injectable, signal, computed, WritableSignal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 export type GameState = 'idle' | 'playing' | 'paused' | 'gameOver';
-
-type GameSignals = {
-  gameState: WritableSignal<GameState>;
-  score: WritableSignal<number>;
-  highScore: WritableSignal<number>;
-  playerName: WritableSignal<string>;
-};
 
 export interface Fish {
   x: number;
@@ -219,13 +212,21 @@ export class GameService {
   private checkCollisions(): void {
     const fish = this._fish();
     const obstacles = this._obstacles();
+    const hitboxScale = 0.5; // Reduce hitbox to 50% of original size
+
+    const fishHitbox = {
+      x: fish.x + (fish.width * (1 - hitboxScale)) / 2,
+      y: fish.y + (fish.height * (1 - hitboxScale)) / 2,
+      width: fish.width * hitboxScale,
+      height: fish.height * hitboxScale
+    };
 
     for (const obstacle of obstacles) {
       // Check collision with top pipe
       if (
-        fish.x + fish.width > obstacle.x &&
-        fish.x < obstacle.x + obstacle.width &&
-        fish.y < obstacle.top
+        fishHitbox.x + fishHitbox.width > obstacle.x &&
+        fishHitbox.x < obstacle.x + obstacle.width &&
+        fishHitbox.y < obstacle.top
       ) {
         this.gameOver();
         return;
@@ -233,9 +234,9 @@ export class GameService {
 
       // Check collision with bottom pipe
       if (
-        fish.x + fish.width > obstacle.x &&
-        fish.x < obstacle.x + obstacle.width &&
-        fish.y + fish.height > obstacle.top + obstacle.gap
+        fishHitbox.x + fishHitbox.width > obstacle.x &&
+        fishHitbox.x < obstacle.x + obstacle.width &&
+        fishHitbox.y + fishHitbox.height > obstacle.top + obstacle.gap
       ) {
         this.gameOver();
         return;
@@ -286,7 +287,6 @@ export class GameService {
     }
   }
 
-  // Getters for components
   getFish(): Fish {
     return this._fish();
   }

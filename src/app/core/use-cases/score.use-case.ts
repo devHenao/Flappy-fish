@@ -1,22 +1,22 @@
 import { inject, Injectable } from '@angular/core';
-import { Score } from '../models';
+import { Score, CreateScoreDto } from '../../domain/models';
 import { ScoreRepository, SCORE_REPOSITORY } from '../repositories';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScoreUseCase {
-  private readonly scoreRepository = inject(SCORE_REPOSITORY);
+  private scoreRepository = inject(SCORE_REPOSITORY);
 
-  async createScore(score: Omit<Score, 'id' | 'createdAt'>): Promise<Score> {
+  registerScore(score: CreateScoreDto): Promise<Score> {
     return this.scoreRepository.create(score);
   }
 
-  async getTopScores(limit: number = 10): Promise<Score[]> {
+  getTopScores(limit: number = 10): Promise<Score[]> {
     return this.scoreRepository.getTopScores(limit);
   }
 
-  async getScoresByPlayer(playerId: string): Promise<Score[]> {
-    return this.scoreRepository.getByPlayerId(playerId);
+  getScoresByAlias(alias: string): Promise<Score[]> {
+    return this.scoreRepository.getByPlayerId(alias);
   }
 }

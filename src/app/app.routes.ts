@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { GameComponent } from './features/game/game.component';
+import { GameComponent } from './presentation/game/game.component';
 
 export const routes: Routes = [
   {

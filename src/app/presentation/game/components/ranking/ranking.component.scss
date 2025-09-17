@@ -1,0 +1,116 @@
+:host {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  border: 5px solid #2c3e50;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .modal-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    text-transform: uppercase;
+    margin: 0;
+  }
+}
+
+.view-switcher {
+  display: flex;
+  gap: 10px;
+
+  button {
+    background: none;
+    border: 2px solid transparent;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &.active {
+      border-color: #3498db;
+      background-color: #f0f8ff;
+    }
+
+    &:hover:not(.active) {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.scores-container {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    thead {
+      background-color: #f2f2f2;
+      th {
+        font-size: 1rem;
+        color: #34495e;
+      }
+    }
+
+    tbody {
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      td {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+      }
+    }
+  }
+}
+
+.close-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+}

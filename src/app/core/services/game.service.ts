@@ -1,22 +1,8 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Fish } from '../domain/fish.model';
+import { Obstacle } from '../domain/obstacle.model';
 
 export type GameState = 'idle' | 'playing' | 'paused' | 'gameOver';
-
-export interface Fish {
-  x: number;
-  y: number;
-  velocity: number;
-  width: number;
-  height: number;
-}
-
-export interface Obstacle {
-  x: number;
-  top: number;
-  width: number;
-  gap: number;
-  scored: boolean;
-}
 
 @Injectable({
   providedIn: 'root'

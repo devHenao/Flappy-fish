@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { GameService, GameState } from '../../core/services';
 import { ScoreUseCase } from '@core/use-cases';
 import { GameBoardComponent } from './components/game-board/game-board.component';
+import { RankingComponent } from './components/ranking/ranking.component';
+import { RankingService } from '@core/services/ranking.service';
 import { RankingSocketService } from '../../infrastructure/services/ranking-socket.service';
 import { Score } from '@domain/models';
 
@@ -15,7 +17,8 @@ import { Score } from '@domain/models';
     CommonModule,
     RouterModule,
     FormsModule,
-    GameBoardComponent
+    GameBoardComponent,
+    RankingComponent
   ],
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
@@ -24,6 +27,7 @@ export class GameComponent implements OnInit, OnDestroy {
   gameService = inject(GameService);
   private scoreUseCase = inject(ScoreUseCase);
   private rankingSocketService = inject(RankingSocketService);
+  private rankingService = inject(RankingService);
 
   gameState = signal<GameState>('idle');
   score = signal(0);
@@ -31,6 +35,8 @@ export class GameComponent implements OnInit, OnDestroy {
   playerName = signal('Player');
   showNameInput = signal(true);
   ranking = signal<Score[]>([]);
+  showRanking = signal(false);
+  rankingMode = signal<'top' | 'player'>('top');
   finalScore = signal(0);
   private isGameOverHandled = false;
 
@@ -80,5 +86,36 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isGameOverHandled = false;
     this.gameService.restartGame();
     this.gameState.set('playing');
+  }
+
+  async toggleRanking(): Promise<void> {
+    if (this.showRanking()) {
+      this.showRanking.set(false);
+      this.gameService.resumeGame();
+    } else {
+      this.gameService.pauseGame();
+      this.rankingMode.set('top'); // Default to top scores
+      await this.loadScores('top');
+      this.showRanking.set(true);
+    }
+  }
+
+  async loadScores(mode: 'top' | 'player'): Promise<void> {
+    this.rankingMode.set(mode);
+    try {
+      let scores: Score[] = [];
+      if (mode === 'top') {
+        scores = await this.rankingService.getTopScores(10);
+      } else {
+        const alias = this.playerName();
+        if (alias) {
+          scores = await this.rankingService.getScoresByAlias(alias);
+        }
+      }
+      this.ranking.set(scores);
+    } catch (error) {
+      console.error(`Failed to load ${mode} scores:`, error);
+      this.ranking.set([]); // Show an empty list on error
+    }
   }
 }

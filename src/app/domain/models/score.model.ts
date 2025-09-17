@@ -11,7 +11,7 @@ export interface Score {
   metadata?: string | null;
   sessionId?: string | null;  // GUID
   createdAt: Date;
-  
+
   // Navigation properties (using type imports)
   aliasNavigation?: Alias;
   session?: Session;

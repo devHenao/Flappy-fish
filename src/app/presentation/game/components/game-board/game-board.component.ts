@@ -9,7 +9,8 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GameService, type Fish, type Obstacle } from '@core/services';
+import { GameService } from '@core/services';
+import { type Fish, type Obstacle } from '@core/domain';
 
 type GameState = 'idle' | 'playing' | 'paused' | 'gameOver';
 

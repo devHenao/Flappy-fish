@@ -1,4 +1,7 @@
 <div class="game-container">
+  <!-- Trophy Button -->
+  <button *ngIf="gameState() === 'playing'" class="trophy-button" (click)="toggleRanking()">🏆</button>
+
   <!-- Game Board -->
   <app-game-board
     *ngIf="gameState() === 'playing' || gameState() === 'gameOver'"
@@ -32,4 +35,13 @@
       <button (click)="startGame()">Start Game</button>
     </div>
   </div>
+
+  <!-- Ranking Modal -->
+  <app-ranking
+    *ngIf="showRanking()"
+    [scores]="ranking()"
+    [rankingMode]="rankingMode()"
+    (closeModal)="toggleRanking()"
+    (viewChange)="loadScores($event)">
+  </app-ranking>
 </div>

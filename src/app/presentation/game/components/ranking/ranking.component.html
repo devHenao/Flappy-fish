@@ -1,0 +1,33 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ rankingMode === 'top' ? 'Top Scores' : 'Your Scores' }}</h2>
+      <div class="view-switcher">
+        <button [class.active]="rankingMode === 'top'" (click)="changeView('top')">🏆</button>
+        <button [class.active]="rankingMode === 'player'" (click)="changeView('player')">👤</button>
+      </div>
+    </div>
+    <div class="scores-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let score of scores; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ score.alias }}</td>
+            <td>{{ score.points }}</td>
+          </tr>
+          <tr *ngIf="scores.length === 0">
+            <td colspan="3">No scores yet. Be the first!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="close-button" (click)="onClose()">Close</button>
+  </div>
+</div>

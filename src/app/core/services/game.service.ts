@@ -43,7 +43,7 @@ export class GameService {
   obstacles = signal<Obstacle[]>([]);
 
   // Game settings
-  private readonly GRAVITY = 0.5;
+  private readonly GRAVITY = 0.65;
   private readonly JUMP_FORCE = -10;
   private readonly PIPE_SPEED = 2;
   private readonly PIPE_GAP = 200;
